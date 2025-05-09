@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
   // 🔒 Password protection (3 attempts)
   let tries = 3;
-  const correctPassword = "qwerty123456"; // 🔐 Your password here
+  const correctPassword = "qwerty123456"; // Change to your real password
 
   while (tries > 0) {
     const input = prompt("Enter password to use the URL shortener:");
@@ -18,6 +18,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const form = document.getElementById("shortenForm");
   const longUrlInput = document.getElementById("longUrl");
+  const titleInput = document.getElementById("titleInput");
   const shortenedLinksDiv = document.getElementById("shortenedLinks");
 
   const loadLinks = () => {
@@ -28,8 +29,10 @@ document.addEventListener("DOMContentLoaded", () => {
       div.className = "shortened-item";
       div.innerHTML = `
         <input type="text" value="${link.short}" readonly />
+        <input type="text" value="${link.title || ''}" id="edit-title-${index}" placeholder="Title" />
         <input type="text" value="${link.original}" id="edit-original-${index}" />
         <button onclick="saveLink(${index})">Save</button>
+        <button onclick="deleteLink(${index})">Delete</button>
         <button onclick="copyToClipboard('${link.short}')">Copy</button>
       `;
       shortenedLinksDiv.appendChild(div);
@@ -38,32 +41,35 @@ document.addEventListener("DOMContentLoaded", () => {
 
   window.saveLink = async (index) => {
     const links = JSON.parse(localStorage.getItem("shortenedLinks") || "[]");
-    const input = document.getElementById(`edit-original-${index}`);
-    const newOriginal = input.value;
-    const shortUrl = links[index].short;
-
-    // ✅ This ensures we extract the short code correctly, regardless of domain
-    const shortCode = shortUrl.replace(/^https?:\/\/[^\/]+\/?/, "").trim();
+    const newOriginal = document.getElementById(`edit-original-${index}`).value;
+    const newTitle = document.getElementById(`edit-title-${index}`).value;
+    const shortCode = links[index].short.split("/").pop();
 
     try {
       const response = await fetch("https://proud-morning-fb39.wqeqweqweqfasdadq.workers.dev/api/update", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ short: shortCode, url: newOriginal }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ shortCode, newUrl: newOriginal }),
       });
 
-      if (!response.ok) {
-        throw new Error("Worker update failed");
-      }
+      if (!response.ok) throw new Error("Worker update failed");
 
       links[index].original = newOriginal;
+      links[index].title = newTitle;
       localStorage.setItem("shortenedLinks", JSON.stringify(links));
-      alert("Link updated successfully.");
+      alert("Link updated.");
       loadLinks();
     } catch (err) {
-      alert("Failed to update backend. Changes not saved.");
+      alert("Failed to update backend. Local change only.");
+    }
+  };
+
+  window.deleteLink = (index) => {
+    const links = JSON.parse(localStorage.getItem("shortenedLinks") || "[]");
+    if (confirm("Delete this link?")) {
+      links.splice(index, 1);
+      localStorage.setItem("shortenedLinks", JSON.stringify(links));
+      loadLinks();
     }
   };
 
@@ -76,22 +82,22 @@ document.addEventListener("DOMContentLoaded", () => {
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     const longUrl = longUrlInput.value;
+    const title = titleInput.value;
 
     const response = await fetch("https://proud-morning-fb39.wqeqweqweqfasdadq.workers.dev/api/create", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ url: longUrl }),
     });
 
     const data = await response.json();
 
     const links = JSON.parse(localStorage.getItem("shortenedLinks") || "[]");
-    links.push({ original: data.original, short: data.short });
+    links.push({ original: data.original, short: data.short, title });
     localStorage.setItem("shortenedLinks", JSON.stringify(links));
 
     longUrlInput.value = "";
+    titleInput.value = "";
     loadLinks();
   });
 
