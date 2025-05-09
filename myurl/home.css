@@ -32,6 +32,8 @@ input[type="text"] {
   font-size: 16px;
   border: 1px solid #ccc;
   border-radius: 5px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 button {
@@ -48,43 +50,44 @@ button[type="submit"] {
 }
 
 .shortened-item {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
   background: white;
-  padding: 10px;
+  padding: 12px;
   border-radius: 6px;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
-  margin-bottom: 10px;
-  gap: 8px;
+  margin-bottom: 15px;
+}
+
+.shortened-item div:first-child {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.shortened-item .visit-count {
+  font-size: 13px;
+  color: #555;
+  margin-bottom: 8px;
 }
 
 .shortened-item input[type="text"] {
-  flex: 1 1 140px;
-  min-width: 100px;
+  margin-bottom: 6px;
 }
 
 .shortened-item button {
-  background-color: #007bff;
-  color: white;
-  flex: 0 0 auto;
-  padding: 8px 10px;
+  margin-right: 5px;
+  margin-top: 5px;
 }
 
-.shortened-item button:nth-child(4) {
+.shortened-item button:nth-of-type(1) {
   background-color: #28a745; /* Save */
+  color: white;
 }
-.shortened-item button:nth-child(5) {
+.shortened-item button:nth-of-type(2) {
   background-color: #dc3545; /* Delete */
+  color: white;
 }
-.shortened-item button:nth-child(6) {
+.shortened-item button:nth-of-type(3) {
   background-color: #17a2b8; /* Copy */
-}
-
-.visit-count {
-  font-size: 12px;
-  color: #666;
-  margin: 4px 0 0 4px;
+  color: white;
 }
 
 @media (max-width: 600px) {
@@ -94,17 +97,16 @@ button[type="submit"] {
   }
 
   .shortened-item {
-    flex-direction: column;
-    align-items: stretch;
+    font-size: 14px;
   }
 
   .shortened-item input,
   .shortened-item button {
     width: 100%;
-    margin-top: 4px;
+    margin-top: 6px;
   }
 
   .shortened-item button {
-    padding: 10px;
+    font-size: 14px;
   }
 }
