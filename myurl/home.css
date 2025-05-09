@@ -1,17 +1,17 @@
 body {
   font-family: Arial, sans-serif;
-  background-color: #f2f2f2;
+  background: #f3f3f3;
   margin: 0;
   padding: 0;
 }
 
 .container {
-  max-width: 500px;
+  max-width: 600px;
   margin: 40px auto;
-  background-color: white;
-  padding: 30px;
-  border-radius: 10px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 h1 {
@@ -23,21 +23,20 @@ form {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  margin-bottom: 20px;
 }
 
 input[type="url"],
 input[type="text"] {
   padding: 10px;
-  font-size: 14px;
+  font-size: 16px;
   border: 1px solid #ccc;
   border-radius: 5px;
-  width: 100%;
-  box-sizing: border-box;
 }
 
 button {
   padding: 10px;
-  font-size: 14px;
+  font-size: 15px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
@@ -46,76 +45,66 @@ button {
 button[type="submit"] {
   background-color: #007bff;
   color: white;
-  transition: background-color 0.2s;
-}
-
-button[type="submit"]:hover {
-  background-color: #0056b3;
 }
 
 .shortened-item {
   display: flex;
-  flex-direction: column;
-  gap: 5px;
-  background-color: #ffffff;
+  align-items: center;
+  flex-wrap: wrap;
+  background: white;
   padding: 10px;
   border-radius: 6px;
-  margin-top: 15px;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+  margin-bottom: 10px;
+  gap: 8px;
 }
 
-.shortened-item input[type="text"],
-.shortened-item input[type="url"] {
-  flex: 1;
-  min-width: 0;
+.shortened-item input[type="text"] {
+  flex: 1 1 140px;
+  min-width: 100px;
 }
 
-.shortened-item .button-row {
-  display: flex;
-  gap: 5px;
-  justify-content: flex-end;
-}
-
-.shortened-item .button-row button {
-  flex: 1;
+.shortened-item button {
   background-color: #007bff;
   color: white;
+  flex: 0 0 auto;
+  padding: 8px 10px;
 }
 
-.shortened-item .button-row button:hover {
-  background-color: #0056b3;
+.shortened-item button:nth-child(4) {
+  background-color: #28a745; /* Save */
+}
+.shortened-item button:nth-child(5) {
+  background-color: #dc3545; /* Delete */
+}
+.shortened-item button:nth-child(6) {
+  background-color: #17a2b8; /* Copy */
 }
 
-@media (min-width: 480px) {
-  .shortened-item {
-    flex-direction: row;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .shortened-item input[type="text"],
-  .shortened-item input[type="url"] {
-    flex: 2;
-  }
-
-  .shortened-item .button-row {
-    flex-direction: row;
-    flex: 1;
-  }
+.visit-count {
+  font-size: 12px;
+  color: #666;
+  margin: 4px 0 0 4px;
 }
 
-@media (max-width: 480px) {
+@media (max-width: 600px) {
   .container {
     margin: 20px;
-    padding: 20px;
+    padding: 15px;
   }
 
   .shortened-item {
-    padding: 10px;
+    flex-direction: column;
+    align-items: stretch;
   }
 
-  .shortened-item .button-row button {
-    font-size: 13px;
-    padding: 8px;
+  .shortened-item input,
+  .shortened-item button {
+    width: 100%;
+    margin-top: 4px;
+  }
+
+  .shortened-item button {
+    padding: 10px;
   }
 }
