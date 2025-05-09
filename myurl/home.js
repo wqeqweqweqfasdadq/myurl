@@ -37,13 +37,33 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   };
 
-  window.saveLink = (index) => {
+  window.saveLink = async (index) => {
     const links = JSON.parse(localStorage.getItem("shortenedLinks") || "[]");
     const input = document.getElementById(`edit-original-${index}`);
-    links[index].original = input.value;
-    localStorage.setItem("shortenedLinks", JSON.stringify(links));
-    alert("Link updated locally.");
-    loadLinks();
+    const newOriginal = input.value;
+    const shortUrl = links[index].short;
+    const shortCode = shortUrl.split("/").pop();
+
+    try {
+      const response = await fetch("https://proud-morning-fb39.wqeqweqweqfasdadq.workers.dev/api/update", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ short: shortCode, url: newOriginal }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Worker update failed");
+      }
+
+      links[index].original = newOriginal;
+      localStorage.setItem("shortenedLinks", JSON.stringify(links));
+      alert("Link updated successfully.");
+      loadLinks();
+    } catch (err) {
+      alert("Failed to update backend. Changes not saved.");
+    }
   };
 
   window.copyToClipboard = (text) => {
