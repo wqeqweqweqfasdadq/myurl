@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const correctPassword = "qwerty123456"; // Change this
 
   while (tries > 0) {
-    const input = prompt("Kung ikaw ay ako, at ako ay ikaw, Sinong ng yare?:");
+    const input = prompt("Enter password to use the URL shortener:");
     if (input === correctPassword) break;
     tries--;
     if (tries === 0) {
@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
       document.body.innerHTML = "";
       return;
     } else {
-      alert(Incorrect password. ${tries} ${tries === 1 ? "try" : "tries"} left.);
+      alert(`Incorrect password. ${tries} ${tries === 1 ? "try" : "tries"} left.`);
     }
   }
 
@@ -37,13 +37,13 @@ document.addEventListener("DOMContentLoaded", () => {
         // 📊 Fetch visit count breakdown
         let visits = { today: 0, week: 0, total: 0 };
         try {
-          const visitRes = await fetch(https://proud-morning-fb39.wqeqweqweqfasdadq.workers.dev/api/visits/${shortCode});
+          const visitRes = await fetch(`https://proud-morning-fb39.wqeqweqweqfasdadq.workers.dev/api/visits/${shortCode}`);
           visits = await visitRes.json();
         } catch {}
 
         const div = document.createElement("div");
         div.className = "shortened-item";
-        div.innerHTML = 
+        div.innerHTML = `
           <div><strong>${link.short}</strong></div>
           <div style="font-size: 0.9em; margin-bottom: 5px;">
             🔹 Today: ${visits.today || 0} visits |
@@ -55,7 +55,7 @@ document.addEventListener("DOMContentLoaded", () => {
           <button onclick="saveLink(${index})">Save</button>
           <button onclick="deleteLink(${index})">Delete</button>
           <button onclick="copyToClipboard('${link.short}')">Copy</button>
-        ;
+        `;
         shortenedLinksDiv.appendChild(div);
       }
     } catch (err) {
@@ -64,8 +64,8 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   window.saveLink = async (index) => {
-    const title = document.getElementById(edit-title-${index}).value;
-    const url = document.getElementById(edit-original-${index}).value;
+    const title = document.getElementById(`edit-title-${index}`).value;
+    const url = document.getElementById(`edit-original-${index}`).value;
     const short = links[index].short.split("/").pop();
 
     try {
@@ -131,5 +131,3 @@ document.addEventListener("DOMContentLoaded", () => {
 
   loadLinks();
 });
-
-
