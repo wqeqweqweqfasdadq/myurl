@@ -12,6 +12,7 @@ body {
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
 }
 
 h1 {
@@ -34,6 +35,12 @@ input[type="text"] {
   border-radius: 5px;
   width: 100%;
   box-sizing: border-box;
+  transition: all 0.2s ease;
+}
+
+input[type="url"]:focus,
+input[type="text"]:focus {
+  border-color: #007bff;
 }
 
 button {
@@ -42,11 +49,16 @@ button {
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 button[type="submit"] {
   background-color: #007bff;
   color: white;
+}
+
+button:hover {
+  opacity: 0.8;
 }
 
 .shortened-item {
@@ -55,6 +67,11 @@ button[type="submit"] {
   border-radius: 6px;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
   margin-bottom: 15px;
+  transition: all 0.3s ease;
+}
+
+.shortened-item:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .shortened-item div:first-child {
