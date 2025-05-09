@@ -38,7 +38,8 @@ document.addEventListener("DOMContentLoaded", () => {
     e.preventDefault();
     const longUrl = longUrlInput.value;
 
-    const response = await fetch("https://proud-morning-fb39.wqeqweqweqfasdadq.workers.dev/api/create", {
+    // ✅ Fixed URL: uses the correct workers.dev domain
+    const response = await fetch("https://proud-morning-fb39.wqeqqweqweqfasdadaq.workers.dev/api/create", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
