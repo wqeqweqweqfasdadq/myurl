@@ -8,11 +8,11 @@ document.addEventListener("DOMContentLoaded", () => {
     if (input === correctPassword) break;
     tries--;
     if (tries === 0) {
-      alert("Access denied.");
+      alert("try and try until you bai na bai");
       document.body.innerHTML = "";
       return;
     } else {
-      alert(`Wrong Mistake!. ${tries} ${tries === 1 ? "try" : "tries"} left.`);
+      alert(`Wrong Mistake!!! ${tries} ${tries === 1 ? "try" : "tries"} left.`);
     }
   }
 
