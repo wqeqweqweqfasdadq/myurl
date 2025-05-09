@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
   // 🔒 Password protection (3 attempts)
   let tries = 3;
-  const correctPassword = "qwerty123456"; // Change to your real password
+  const correctPassword = "qwerty123456"; // Change this
 
   while (tries > 0) {
     const input = prompt("Enter password to use the URL shortener:");
@@ -17,8 +17,8 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   const form = document.getElementById("shortenForm");
-  const longUrlInput = document.getElementById("longUrl");
   const titleInput = document.getElementById("titleInput");
+  const longUrlInput = document.getElementById("longUrl");
   const shortenedLinksDiv = document.getElementById("shortenedLinks");
 
   const loadLinks = () => {
@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
       div.className = "shortened-item";
       div.innerHTML = `
         <input type="text" value="${link.short}" readonly />
-        <input type="text" value="${link.title || ''}" id="edit-title-${index}" placeholder="Title" />
+        <input type="text" value="${link.title || ""}" id="edit-title-${index}" placeholder="Title" />
         <input type="text" value="${link.original}" id="edit-original-${index}" />
         <button onclick="saveLink(${index})">Save</button>
         <button onclick="deleteLink(${index})">Delete</button>
@@ -41,23 +41,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
   window.saveLink = async (index) => {
     const links = JSON.parse(localStorage.getItem("shortenedLinks") || "[]");
-    const newOriginal = document.getElementById(`edit-original-${index}`).value;
+    const shortUrl = links[index].short;
+    const shortCode = shortUrl.split("/").pop();
     const newTitle = document.getElementById(`edit-title-${index}`).value;
-    const shortCode = links[index].short.split("/").pop();
+    const newUrl = document.getElementById(`edit-original-${index}`).value;
 
     try {
       const response = await fetch("https://proud-morning-fb39.wqeqweqweqfasdadq.workers.dev/api/update", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ shortCode, newUrl: newOriginal }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ short: shortCode, url: newUrl, title: newTitle }),
       });
 
-      if (!response.ok) throw new Error("Worker update failed");
+      if (!response.ok) throw new Error("Failed to update backend");
 
-      links[index].original = newOriginal;
+      links[index].original = newUrl;
       links[index].title = newTitle;
       localStorage.setItem("shortenedLinks", JSON.stringify(links));
-      alert("Link updated.");
+      alert("Updated successfully.");
       loadLinks();
     } catch (err) {
       alert("Failed to update backend. Local change only.");
@@ -66,7 +69,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   window.deleteLink = (index) => {
     const links = JSON.parse(localStorage.getItem("shortenedLinks") || "[]");
-    if (confirm("Delete this link?")) {
+    if (confirm("Delete this shortened link?")) {
       links.splice(index, 1);
       localStorage.setItem("shortenedLinks", JSON.stringify(links));
       loadLinks();
@@ -87,13 +90,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const response = await fetch("https://proud-morning-fb39.wqeqweqweqfasdadq.workers.dev/api/create", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ url: longUrl }),
+      body: JSON.stringify({ url: longUrl, title }),
     });
 
     const data = await response.json();
 
     const links = JSON.parse(localStorage.getItem("shortenedLinks") || "[]");
-    links.push({ original: data.original, short: data.short, title });
+    links.push({ original: data.original, short: data.short, title: data.title || "" });
     localStorage.setItem("shortenedLinks", JSON.stringify(links));
 
     longUrlInput.value = "";
