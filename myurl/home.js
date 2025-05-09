@@ -29,20 +29,20 @@ document.addEventListener("DOMContentLoaded", () => {
       div.className = "shortened-item";
       div.innerHTML = `
         <input type="text" value="${link.short}" readonly />
-        <input type="text" value="${link.original}" />
-        <button onclick="editLink(${index})">Edit</button>
+        <input type="text" value="${link.original}" id="edit-original-${index}" />
+        <button onclick="saveLink(${index})">Save</button>
         <button onclick="copyToClipboard('${link.short}')">Copy</button>
       `;
       shortenedLinksDiv.appendChild(div);
     });
   };
 
-  window.editLink = (index) => {
+  window.saveLink = (index) => {
     const links = JSON.parse(localStorage.getItem("shortenedLinks") || "[]");
-    const div = shortenedLinksDiv.children[index];
-    const newOriginal = div.querySelectorAll("input")[1].value;
-    links[index].original = newOriginal;
+    const input = document.getElementById(`edit-original-${index}`);
+    links[index].original = input.value;
     localStorage.setItem("shortenedLinks", JSON.stringify(links));
+    alert("Link updated locally.");
     loadLinks();
   };
 
