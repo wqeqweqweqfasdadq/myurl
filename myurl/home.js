@@ -34,20 +34,22 @@ document.addEventListener("DOMContentLoaded", () => {
         const link = links[index];
         const shortCode = link.short.split("/").pop();
 
-        // 👁 Fetch visit count
-        let visitCount = 0;
+        // 📊 Fetch visit count breakdown
+        let visits = { today: 0, week: 0, total: 0 };
         try {
           const visitRes = await fetch(`https://proud-morning-fb39.wqeqweqweqfasdadq.workers.dev/api/visits/${shortCode}`);
-          const visitData = await visitRes.json();
-          visitCount = visitData.count || 0;
-        } catch {
-          visitCount = 0;
-        }
+          visits = await visitRes.json();
+        } catch {}
 
         const div = document.createElement("div");
         div.className = "shortened-item";
         div.innerHTML = `
-          <div><strong>${link.short}</strong> — <em>${visitCount} visits today</em></div>
+          <div><strong>${link.short}</strong></div>
+          <div style="font-size: 0.9em; margin-bottom: 5px;">
+            🔹 Today: ${visits.today || 0} visits |
+            🔸 This week: ${visits.week || 0} |
+            🌐 Total: ${visits.total || 0}
+          </div>
           <input type="text" value="${link.title || ""}" id="edit-title-${index}" placeholder="Title" />
           <input type="text" value="${link.original}" id="edit-original-${index}" />
           <button onclick="saveLink(${index})">Save</button>
