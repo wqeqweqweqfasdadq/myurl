@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
   // 🔒 Password protection
   let tries = 3;
-  const correctPassword = "qwerty123456"; // Change to your real password
+  const correctPassword = "qwerty123456"; // Change this
 
   while (tries > 0) {
     const input = prompt("Enter password to use the URL shortener:");
@@ -29,11 +29,25 @@ document.addEventListener("DOMContentLoaded", () => {
       links = await response.json();
 
       shortenedLinksDiv.innerHTML = "";
-      links.forEach((link, index) => {
+
+      for (let index = 0; index < links.length; index++) {
+        const link = links[index];
+        const shortCode = link.short.split("/").pop();
+
+        // 👁 Fetch visit count
+        let visitCount = 0;
+        try {
+          const visitRes = await fetch(`https://proud-morning-fb39.wqeqweqweqfasdadq.workers.dev/api/visits/${shortCode}`);
+          const visitData = await visitRes.json();
+          visitCount = visitData.count || 0;
+        } catch {
+          visitCount = 0;
+        }
+
         const div = document.createElement("div");
         div.className = "shortened-item";
         div.innerHTML = `
-          <input type="text" value="${link.short}" readonly />
+          <div><strong>${link.short}</strong> — <em>${visitCount} visits today</em></div>
           <input type="text" value="${link.title || ""}" id="edit-title-${index}" placeholder="Title" />
           <input type="text" value="${link.original}" id="edit-original-${index}" />
           <button onclick="saveLink(${index})">Save</button>
@@ -41,7 +55,7 @@ document.addEventListener("DOMContentLoaded", () => {
           <button onclick="copyToClipboard('${link.short}')">Copy</button>
         `;
         shortenedLinksDiv.appendChild(div);
-      });
+      }
     } catch (err) {
       alert("Failed to load links.");
     }
