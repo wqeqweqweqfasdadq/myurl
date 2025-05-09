@@ -1,4 +1,22 @@
 document.addEventListener("DOMContentLoaded", () => {
+  // 🔒 Password protection (3 attempts)
+  let tries = 3;
+  const correctPassword = "qwerty123456"; // ✅ change this to your real password
+
+  while (tries > 0) {
+    const input = prompt("Enter password to use the URL shortener:");
+    if (input === correctPassword) break;
+    tries--;
+    if (tries === 0) {
+      alert("Access denied.");
+      document.body.innerHTML = "";
+      return;
+    } else {
+      alert(`Incorrect password. ${tries} ${tries === 1 ? "try" : "tries"} left.`);
+    }
+  }
+
+  // ✅ Main app logic
   const form = document.getElementById("shortenForm");
   const longUrlInput = document.getElementById("longUrl");
   const shortenedLinksDiv = document.getElementById("shortenedLinks");
@@ -38,7 +56,6 @@ document.addEventListener("DOMContentLoaded", () => {
     e.preventDefault();
     const longUrl = longUrlInput.value;
 
-    // ✅ Fixed URL: uses the correct workers.dev domain
     const response = await fetch("https://proud-morning-fb39.wqeqweqweqfasdadq.workers.dev/api/create", {
       method: "POST",
       headers: {
