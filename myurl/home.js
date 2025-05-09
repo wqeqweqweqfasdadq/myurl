@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // 🔒 Password protection (3 attempts)
+  // 🔒 Password protection
   let tries = 3;
-  const correctPassword = "qwerty123456"; // Change this
+  const correctPassword = "qwerty123456"; // Change to your real password
 
   while (tries > 0) {
     const input = prompt("Enter password to use the URL shortener:");
@@ -21,58 +21,68 @@ document.addEventListener("DOMContentLoaded", () => {
   const longUrlInput = document.getElementById("longUrl");
   const shortenedLinksDiv = document.getElementById("shortenedLinks");
 
-  const loadLinks = () => {
-    const links = JSON.parse(localStorage.getItem("shortenedLinks") || "[]");
-    shortenedLinksDiv.innerHTML = "";
-    links.forEach((link, index) => {
-      const div = document.createElement("div");
-      div.className = "shortened-item";
-      div.innerHTML = `
-        <input type="text" value="${link.short}" readonly />
-        <input type="text" value="${link.title || ""}" id="edit-title-${index}" placeholder="Title" />
-        <input type="text" value="${link.original}" id="edit-original-${index}" />
-        <button onclick="saveLink(${index})">Save</button>
-        <button onclick="deleteLink(${index})">Delete</button>
-        <button onclick="copyToClipboard('${link.short}')">Copy</button>
-      `;
-      shortenedLinksDiv.appendChild(div);
-    });
+  let links = [];
+
+  const loadLinks = async () => {
+    try {
+      const response = await fetch("https://proud-morning-fb39.wqeqweqweqfasdadq.workers.dev/api/list");
+      links = await response.json();
+
+      shortenedLinksDiv.innerHTML = "";
+      links.forEach((link, index) => {
+        const div = document.createElement("div");
+        div.className = "shortened-item";
+        div.innerHTML = `
+          <input type="text" value="${link.short}" readonly />
+          <input type="text" value="${link.title || ""}" id="edit-title-${index}" placeholder="Title" />
+          <input type="text" value="${link.original}" id="edit-original-${index}" />
+          <button onclick="saveLink(${index})">Save</button>
+          <button onclick="deleteLink(${index})">Delete</button>
+          <button onclick="copyToClipboard('${link.short}')">Copy</button>
+        `;
+        shortenedLinksDiv.appendChild(div);
+      });
+    } catch (err) {
+      alert("Failed to load links.");
+    }
   };
 
   window.saveLink = async (index) => {
-    const links = JSON.parse(localStorage.getItem("shortenedLinks") || "[]");
-    const shortUrl = links[index].short;
-    const shortCode = shortUrl.split("/").pop();
-    const newTitle = document.getElementById(`edit-title-${index}`).value;
-    const newUrl = document.getElementById(`edit-original-${index}`).value;
+    const title = document.getElementById(`edit-title-${index}`).value;
+    const url = document.getElementById(`edit-original-${index}`).value;
+    const short = links[index].short.split("/").pop();
 
     try {
       const response = await fetch("https://proud-morning-fb39.wqeqweqweqfasdadq.workers.dev/api/update", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ short: shortCode, url: newUrl, title: newTitle }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ short, url, title }),
       });
 
-      if (!response.ok) throw new Error("Failed to update backend");
-
-      links[index].original = newUrl;
-      links[index].title = newTitle;
-      localStorage.setItem("shortenedLinks", JSON.stringify(links));
+      if (!response.ok) throw new Error();
       alert("Updated successfully.");
-      loadLinks();
-    } catch (err) {
-      alert("Failed to update backend. Local change only.");
+      await loadLinks();
+    } catch {
+      alert("Failed to update.");
     }
   };
 
-  window.deleteLink = (index) => {
-    const links = JSON.parse(localStorage.getItem("shortenedLinks") || "[]");
-    if (confirm("Delete this shortened link?")) {
-      links.splice(index, 1);
-      localStorage.setItem("shortenedLinks", JSON.stringify(links));
-      loadLinks();
+  window.deleteLink = async (index) => {
+    const short = links[index].short.split("/").pop();
+    if (!confirm("Are you sure you want to delete this link?")) return;
+
+    try {
+      const response = await fetch("https://proud-morning-fb39.wqeqweqweqfasdadq.workers.dev/api/delete", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ short }),
+      });
+
+      if (!response.ok) throw new Error();
+      alert("Deleted.");
+      await loadLinks();
+    } catch {
+      alert("Failed to delete.");
     }
   };
 
@@ -84,24 +94,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
-    const longUrl = longUrlInput.value;
+    const url = longUrlInput.value;
     const title = titleInput.value;
 
-    const response = await fetch("https://proud-morning-fb39.wqeqweqweqfasdadq.workers.dev/api/create", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ url: longUrl, title }),
-    });
+    try {
+      const response = await fetch("https://proud-morning-fb39.wqeqweqweqfasdadq.workers.dev/api/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url, title }),
+      });
 
-    const data = await response.json();
-
-    const links = JSON.parse(localStorage.getItem("shortenedLinks") || "[]");
-    links.push({ original: data.original, short: data.short, title: data.title || "" });
-    localStorage.setItem("shortenedLinks", JSON.stringify(links));
-
-    longUrlInput.value = "";
-    titleInput.value = "";
-    loadLinks();
+      if (!response.ok) throw new Error();
+      longUrlInput.value = "";
+      titleInput.value = "";
+      await loadLinks();
+    } catch {
+      alert("Failed to shorten link.");
+    }
   });
 
   loadLinks();
