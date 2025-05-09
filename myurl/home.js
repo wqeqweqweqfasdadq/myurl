@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
       document.body.innerHTML = "";
       return;
     } else {
-      alert(`Incorrect password. ${tries} ${tries === 1 ? "try" : "tries"} left.`);
+      alert(Incorrect password. ${tries} ${tries === 1 ? "try" : "tries"} left.);
     }
   }
 
@@ -34,33 +34,29 @@ document.addEventListener("DOMContentLoaded", () => {
         const link = links[index];
         const shortCode = link.short.split("/").pop();
 
+        // 📊 Fetch visit count breakdown
+        let visits = { today: 0, week: 0, total: 0 };
+        try {
+          const visitRes = await fetch(https://proud-morning-fb39.wqeqweqweqfasdadq.workers.dev/api/visits/${shortCode});
+          visits = await visitRes.json();
+        } catch {}
+
         const div = document.createElement("div");
         div.className = "shortened-item";
-        div.innerHTML = `
+        div.innerHTML = 
           <div><strong>${link.short}</strong></div>
-          <div id="visits-${index}" style="font-size: 0.9em; margin-bottom: 5px; color: #666;">Loading visits...</div>
+          <div style="font-size: 0.9em; margin-bottom: 5px;">
+            🔹 Today: ${visits.today || 0} visits |
+            🔸 This week: ${visits.week || 0} |
+            🌐 Total: ${visits.total || 0}
+          </div>
           <input type="text" value="${link.title || ""}" id="edit-title-${index}" placeholder="Title" />
           <input type="text" value="${link.original}" id="edit-original-${index}" />
           <button onclick="saveLink(${index})">Save</button>
           <button onclick="deleteLink(${index})">Delete</button>
           <button onclick="copyToClipboard('${link.short}')">Copy</button>
-        `;
+        ;
         shortenedLinksDiv.appendChild(div);
-
-        // Fetch visits in the background
-        fetch(`https://proud-morning-fb39.wqeqweqweqfasdadq.workers.dev/api/visits/${shortCode}`)
-          .then(res => res.json())
-          .then(visitData => {
-            const stats = `
-              🔹 Today: ${visitData.today || 0} |
-              🔸 Week: ${visitData.week || 0} |
-              🌐 Total: ${visitData.total || 0}
-            `;
-            document.getElementById(`visits-${index}`).textContent = stats;
-          })
-          .catch(() => {
-            document.getElementById(`visits-${index}`).textContent = "Failed to load visit data.";
-          });
       }
     } catch (err) {
       alert("Failed to load links.");
@@ -68,8 +64,8 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   window.saveLink = async (index) => {
-    const title = document.getElementById(`edit-title-${index}`).value;
-    const url = document.getElementById(`edit-original-${index}`).value;
+    const title = document.getElementById(edit-title-${index}).value;
+    const url = document.getElementById(edit-original-${index}).value;
     const short = links[index].short.split("/").pop();
 
     try {
@@ -135,3 +131,5 @@ document.addEventListener("DOMContentLoaded", () => {
 
   loadLinks();
 });
+
+
