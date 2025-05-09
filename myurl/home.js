@@ -47,7 +47,7 @@ document.addEventListener("DOMContentLoaded", () => {
         `;
         shortenedLinksDiv.appendChild(div);
 
-        // Fetch visits in background
+        // Fetch visits in the background
         fetch(`https://proud-morning-fb39.wqeqweqweqfasdadq.workers.dev/api/visits/${shortCode}`)
           .then(res => res.json())
           .then(visitData => {
