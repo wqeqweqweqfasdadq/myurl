@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
   // 🔒 Password protection (3 attempts)
   let tries = 3;
-  const correctPassword = "qwerty123456"; // ✅ change this to your real password
+  const correctPassword = "qwerty123456"; // 🔐 Your password here
 
   while (tries > 0) {
     const input = prompt("Enter password to use the URL shortener:");
@@ -16,7 +16,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // ✅ Main app logic
   const form = document.getElementById("shortenForm");
   const longUrlInput = document.getElementById("longUrl");
   const shortenedLinksDiv = document.getElementById("shortenedLinks");
@@ -42,7 +41,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const input = document.getElementById(`edit-original-${index}`);
     const newOriginal = input.value;
     const shortUrl = links[index].short;
-    const shortCode = shortUrl.split("/").pop();
+
+    // ✅ This ensures we extract the short code correctly, regardless of domain
+    const shortCode = shortUrl.replace(/^https?:\/\/[^\/]+\/?/, "").trim();
 
     try {
       const response = await fetch("https://proud-morning-fb39.wqeqweqweqfasdadq.workers.dev/api/update", {
@@ -50,7 +51,7 @@ document.addEventListener("DOMContentLoaded", () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ shortCode, newUrl: newOriginal }),
+        body: JSON.stringify({ short: shortCode, url: newOriginal }),
       });
 
       if (!response.ok) {
@@ -76,26 +77,22 @@ document.addEventListener("DOMContentLoaded", () => {
     e.preventDefault();
     const longUrl = longUrlInput.value;
 
-    try {
-      const response = await fetch("https://proud-morning-fb39.wqeqweqweqfasdadq.workers.dev/api/create", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ url: longUrl }),
-      });
+    const response = await fetch("https://proud-morning-fb39.wqeqweqweqfasdadq.workers.dev/api/create", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ url: longUrl }),
+    });
 
-      const data = await response.json();
+    const data = await response.json();
 
-      const links = JSON.parse(localStorage.getItem("shortenedLinks") || "[]");
-      links.push({ original: data.original, short: data.short });
-      localStorage.setItem("shortenedLinks", JSON.stringify(links));
+    const links = JSON.parse(localStorage.getItem("shortenedLinks") || "[]");
+    links.push({ original: data.original, short: data.short });
+    localStorage.setItem("shortenedLinks", JSON.stringify(links));
 
-      longUrlInput.value = "";
-      loadLinks();
-    } catch (err) {
-      alert("Failed to shorten URL. Please try again.");
-    }
+    longUrlInput.value = "";
+    loadLinks();
   });
 
   loadLinks();
