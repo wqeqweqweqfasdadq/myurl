@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const correctPassword = "qwerty123456"; // Change this
 
   while (tries > 0) {
-    const input = prompt("Enter password to use the URL shortener:");
+    const input = prompt("Kung ikaw ay ako, at ako ikaw, Sinong ng yare?:");
     if (input === correctPassword) break;
     tries--;
     if (tries === 0) {
@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
       document.body.innerHTML = "";
       return;
     } else {
-      alert(`Incorrect password. ${tries} ${tries === 1 ? "try" : "tries"} left.`);
+      alert(`Wrong Mistake!. ${tries} ${tries === 1 ? "try" : "tries"} left.`);
     }
   }
 
