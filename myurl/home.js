@@ -50,7 +50,7 @@ document.addEventListener("DOMContentLoaded", () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ short: shortCode, url: newOriginal }),
+        body: JSON.stringify({ shortCode, newUrl: newOriginal }),
       });
 
       if (!response.ok) {
@@ -76,22 +76,26 @@ document.addEventListener("DOMContentLoaded", () => {
     e.preventDefault();
     const longUrl = longUrlInput.value;
 
-    const response = await fetch("https://proud-morning-fb39.wqeqweqweqfasdadq.workers.dev/api/create", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ url: longUrl }),
-    });
+    try {
+      const response = await fetch("https://proud-morning-fb39.wqeqweqweqfasdadq.workers.dev/api/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ url: longUrl }),
+      });
 
-    const data = await response.json();
+      const data = await response.json();
 
-    const links = JSON.parse(localStorage.getItem("shortenedLinks") || "[]");
-    links.push({ original: data.original, short: data.short });
-    localStorage.setItem("shortenedLinks", JSON.stringify(links));
+      const links = JSON.parse(localStorage.getItem("shortenedLinks") || "[]");
+      links.push({ original: data.original, short: data.short });
+      localStorage.setItem("shortenedLinks", JSON.stringify(links));
 
-    longUrlInput.value = "";
-    loadLinks();
+      longUrlInput.value = "";
+      loadLinks();
+    } catch (err) {
+      alert("Failed to shorten URL. Please try again.");
+    }
   });
 
   loadLinks();
